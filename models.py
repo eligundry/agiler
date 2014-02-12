@@ -6,7 +6,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
-    email = Column(String(120))
+    email = Column(String(120), unique=True)
 
     def __init__(self, first_name=None, last_name=None, email=None):
         self.first_name = first_name

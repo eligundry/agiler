@@ -2,8 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-connection_string = setup_database_connection()
-engine = create_engine(connection_string, convert_unicode=True)
+engine = create_engine(setup_database_connection(), convert_unicode=True)
 db_session = scoped_session(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
