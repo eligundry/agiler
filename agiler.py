@@ -1,5 +1,8 @@
 from flask import Flask, Blueprint, render_template
+import yaml
+
 app = Flask(__name__)
+config = yaml.load(open('config.yml', 'r+'))
 
 @app.route('/')
 def index():
