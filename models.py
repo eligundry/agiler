@@ -17,6 +17,10 @@ class User:
         if email is not None:
             self.data = self.table.find_one(email=email)
 
+    def __contains__(self, x):
+        """docstring for __contains__"""
+        return self.data.__contains__(x)
+
     def create(self, first_name, last_name, email, password):
         if len(self.data) is not 0:
             return False
@@ -41,6 +45,15 @@ class User:
 
     def verify_access_token(self, access_token):
         return md5_crypt.verify(access_token, md5_crypt.encrypt(self.data['password']))
+
+    def return_data(self):
+        return {
+            'first_name': self.data.first_name,
+            'last_name': self.data.last_name,
+            'user_id': str(self.data.id),
+            'email': self.data.email,
+            'access_token': self.get_access_token()
+        }
 
 class Category:
     db = dataset.connect(connection)
@@ -79,7 +92,6 @@ class Event:
             'user': user,
             'category': category,
             'name': name,
-            'description': description,
             'location': location,
             'recurring': recurring,
             'time': time,
