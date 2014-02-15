@@ -18,7 +18,6 @@ class User:
             self.data = self.table.find_one(email=email)
 
     def __contains__(self, x):
-        """docstring for __contains__"""
         return self.data.__contains__(x)
 
     def create(self, first_name, last_name, email, password):
@@ -61,9 +60,15 @@ class Category:
     data = {}
 
     def __init__(self, category_id=None, name=None):
-        pass
+        if category_id is not None:
+            self.data = self.table.find_one(id=category_id)
+        elif name is not None:
+            self.data = self.table.find_one(name=name)
 
     def create(self, name, color):
+        if len(self.data):
+            return False
+
         self.data = {
             'name': name,
             'color': color
@@ -71,6 +76,14 @@ class Category:
 
         self.table.insert(self.data)
 
+    def get_all_categories(self):
+        js = []
+        cat = self.table.all()
+
+        for c in cat:
+            js.append(c)
+
+        return js
 
 class Event:
     db = dataset.connect(connection)
@@ -84,7 +97,7 @@ class Event:
         if user_id is not None:
             self.data = self.table.find(user_id=user_id)
 
-    def create(self, user, category, name, description, location, recurring, time, duration):
+    def create(self, user, category, name, recurring, time, duration):
         if len(self.data) is not 0:
             return False
 
@@ -92,7 +105,6 @@ class Event:
             'user': user,
             'category': category,
             'name': name,
-            'location': location,
             'recurring': recurring,
             'time': time,
             'duration': duration,

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import *
 from models import *
 import yaml
 import json
@@ -9,6 +10,7 @@ config = yaml.load(open('config.yml', 'r'))
 # RESTful Routes
 
 @app.route('/api/register', methods=['POST'])
+@cross_origin()
 def api_register():
     """
     POST request that creates new user account
@@ -21,6 +23,7 @@ def api_register():
     return send_json(u.return_data(), status_code=201)
 
 @app.route('/api/login', methods=['POST'])
+@cross_origin()
 def api_login():
     """
     POST request that allows user to login
@@ -36,8 +39,18 @@ def api_login():
     else:
         return send_error('The password for that user is incorrect', 400)
 
+@app.route('/api/categories', methods=['GET'])
+@cross_origin()
+def api_get_all_categories():
+    """
+    GET request that returns all the categories
+    Requires: user_id and access_token
+    """
+    pass
+
 
 @app.route('/api/events', methods=['GET', 'POST'])
+@cross_origin()
 def api_events():
     """
     A collection of routes for events
@@ -53,6 +66,7 @@ def api_events():
         pass
 
 @app.route('/api/events/<int:event_id>', methods=['GET', 'DELETE', 'PUT'])
+@cross_origin()
 def api_event(event_id):
     """
     A collection of routes to do specific operations on an event
