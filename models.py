@@ -1,18 +1,25 @@
-from sqlalchemy import Column, Integer, String
-from agiler.database import Base
+import dataset
+from agiler import config
 
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String(50))
-    last_name = Column(String(50))
-    email = Column(String(120), unique=True)
+connection = '%(engine)s://%(user)s:%(pass)s@%(host)s/%(database)s' % config['db']
 
-    def __init__(self, first_name=None, last_name=None, email=None):
+class User:
+    def __init__(self):
+        self.db = dataset.connect(connection)
+        self.table = self.db['users']
+
+    def create(self, first_name, last_name, email, password):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
+        self.password = password
 
-    def __repr__(self):
-        return '<User %r>' % (self.id)
+        self.table.insert(dict(
+            first_name = self.first_name,
+            last_name = self.last_name,
+            email = self.email,
+            password = self.password
+        ))
 
+    def login(self, user_id, password):
+        pass
