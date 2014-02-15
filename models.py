@@ -1,13 +1,14 @@
 import dataset
+import yaml
 from passlib.hash import bcrypt, md5_crypt
-from agiler import config
 
+config = yaml.load(open('config.yml', 'r'))
 connection = '%(engine)s://%(user)s:%(pass)s@%(host)s/%(database)s' % config['db']
 
 class User:
-    self.db = dataset.connect(connection)
-    self.table = self.db['users']
-    self.data = {}
+    db = dataset.connect(connection)
+    table = db['users']
+    data = {}
 
     def __init__(self, user_id=None, email=None):
         if user_id is not None:
@@ -42,9 +43,9 @@ class User:
         return md5_crypt.verify(access_token, md5_crypt.encrypt(self.data['password']))
 
 class Category:
-    self.db = dataset.connect(connection)
-    self.table = self.db['categories']
-    self.data = {}
+    db = dataset.connect(connection)
+    table = db['categories']
+    data = {}
 
     def __init__(self, category_id=None, name=None):
         pass
@@ -59,9 +60,9 @@ class Category:
 
 
 class Event:
-    self.db = dataset.connect(connection)
-    self.table = self.db['events']
-    self.data = {}
+    db = dataset.connect(connection)
+    table = db['events']
+    data = {}
 
     def __init__(self, event_id=None, user_id=None):
         if event_id is not None:
@@ -70,20 +71,26 @@ class Event:
         if user_id is not None:
             self.data = self.table.find(user_id=user_id)
 
-    def create(self, name, description, location, recurring, time, duration):
+    def create(self, user, category, name, description, location, recurring, time, duration):
         if len(self.data) is not 0:
             return False
 
         self.data = {
+            'user': user,
+            'category': category,
             'name': name,
             'description': description,
             'location': location,
             'recurring': recurring,
             'time': time,
-            'duration': duration
+            'duration': duration,
+            'is_active': True
         }
 
         self.table.insert(self.data)
 
     def update(self):
         pass
+
+    def delete(self):
+        self.table.update({is_active: False})
